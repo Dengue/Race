@@ -30,8 +30,67 @@ var _points = $(".screen-container div"),
 				this.details[5].setAttribute("id","activated");
 				this.details.push(_points[16*_rows+4]);
 				this.details[6].setAttribute("id","activated");
+				this.position = "middle";
+	}
+	GeneratePlayersCar.prototype.turnLeft = function(){
+		console.log(_pCar);
+		if(this.position!="left")
+		{
+			var old = this.details.slice(0);
+			for(var i=0;i<this.details.length;i++){
+				this.details[i]=_points[(this.details[i].offsetTop*_rows)/20 + (this.details[i].offsetLeft - 3*20)/20];
+				this.details[i].setAttribute("id","activated");
+			}
+			tidyUp(old);
+			if(this.position=="middle")
+				this.position = "left";
+			else
+				this.position = "middle";
+		}
+	}
+	GeneratePlayersCar.prototype.turnRight = function(){
+		if(this.position!="right")
+		{
+			var old = this.details.slice(0);
+			for(var i=0;i<this.details.length;i++){
+				this.details[i]=_points[(this.details[i].offsetTop*_rows)/20 + (this.details[i].offsetLeft + 3*20)/20];
+				this.details[i].setAttribute("id","activated");
+			}
+			tidyUp(old);
+			if(this.position=="middle")
+				this.position = "right";
+			else
+				this.position = "middle";
+		}
+	}
+	function keyHandler(e){
+		 switch (e.keyCode) {
+            case 37:
+                _pCar.turnLeft();
+                break;
+            case 38:
+                break;
+            case 39:
+                _pCar.turnRight();
+                break;
+            case 40:
+                break;
+            case 65:
+                _pCar.turnLeft();
+                break;
+            case 87:
+                break;
+            case 68:
+                _pCar.turnRight();
+                break;
+            case 83:
+                break
+        }
 	}
 	var	_pCar = new GeneratePlayersCar();
+
+	window.addEventListener("keydown",keyHandler,false);
+	window.addEventListener("keypress",keyHandler,false);
 	function diffArrays(A,B){
     var M = A.length, N = B.length, c = 0, C = [];
 	    for (var i = 0; i < M; i++){
@@ -47,10 +106,6 @@ var _points = $(".screen-container div"),
 	}
     function stepDown(_details){
     	var old = _details.slice(0);
-    	/*_details.forEach(function(item,i,arr){
-    		item=_points[(item.offsetTop+20)/20*_rows+item.offsetLeft/20];
-    		item.setAttribute("id","activated");
-    	});*/
 		for(var i=0;i<_details.length;i++){
 			_details[i]=_points[(_details[i].offsetTop+20)/20*_rows+_details[i].offsetLeft/20];
 			_details[i].setAttribute("id","activated");
@@ -108,12 +163,12 @@ var _points = $(".screen-container div"),
 			            _step++;
 						clearInterval(id);
 						var _car = new Car(_details);
-						setInterval(roll.bind(_car),100);
+						setInterval(roll.bind(_car),1000);
 						break;
 					}
 				}
 			}
-			var id = setInterval(steps,100);
+			var id = setInterval(steps,1000);
 		})();
 		return _details;		
 	}
@@ -123,4 +178,5 @@ var _points = $(".screen-container div"),
 		tidyUp(rez);
 	}
 	Car.appearence(1);
+	Car.appearence(2);
 };
