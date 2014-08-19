@@ -160,7 +160,7 @@ var _points = $(".screen-container div"),
 	Car.prototype.roll = function(){
 		var self = this;
 		Car.appearence(generateRandomCars());
-		var i = 5;
+		var i = 15;
 		function f(){
 			var old = stepDown(self.details);
 		    var rez = diffArrays(old,self.details);
