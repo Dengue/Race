@@ -11,7 +11,8 @@
 })();
 var _points = $(".screen-container div"),
 	_rows = 9,
-	_columns = 20;
+	_columns = 20,
+	_speed = 50;
 	var	_pCar = new GeneratePlayersCar();
 	window.addEventListener("keydown",keyHandler,false);
 	window.addEventListener("keypress",keyHandler,false);
@@ -158,12 +159,16 @@ var _points = $(".screen-container div"),
 	}
 	Car.prototype.roll = function(){
 		var self = this;
+		Car.appearence(generateRandomCars());
+		var i = 5;
 		function f(){
 			var old = stepDown(self.details);
 		    var rez = diffArrays(old,self.details);
 		    tidyUp(rez);
+		    if(i-- > 0)
+		    	setTimeout(f,_speed);
 		}
-		setInterval(f,1000);
+		setTimeout(f,_speed);
 	}
 	Car.appearence = function(runways){
 		var	_runwayWidth =3,
@@ -173,9 +178,8 @@ var _points = $(".screen-container div"),
 			var i,j;
 			function steps(){
 				if(runways.interval>0){
-					console.log(runways.interval);
 					runways.interval--;
-					setTimeout(steps,1000);
+					setTimeout(steps,_speed);
 					return;
 				}
 				switch(_step){
@@ -187,7 +191,7 @@ var _points = $(".screen-container div"),
 							_details[j+1].setAttribute("id","activated");
 						}
 						_step++;
-						setTimeout(steps,1000);
+						setTimeout(steps,_speed);
 						break;
 					}
 					case 1:{
@@ -199,7 +203,7 @@ var _points = $(".screen-container div"),
 						var rez = diffArrays(old,_details);
 			            tidyUp(rez);
 			            _step++;
-			            setTimeout(steps,1000);
+			            setTimeout(steps,_speed);
 			            break;
 					}
 					case 2:{
@@ -216,7 +220,7 @@ var _points = $(".screen-container div"),
 						var rez = diffArrays(old,_details);
 			            tidyUp(rez);
 			            _step++;
-			            setTimeout(steps,1000);
+			            setTimeout(steps,_speed);
 			            break;
 					}
 					case 3:{
@@ -235,7 +239,7 @@ var _points = $(".screen-container div"),
 					}
 				}
 			}
-			var id = setTimeout(steps,1000);
+			var id = setTimeout(steps,_speed);
 		})();
 		return _details;		
 	}
