@@ -133,9 +133,9 @@ var _points = $(".screen-container div"),
     		}
     	}
     	var _carTracks = [];
-    	_carTracks[0] = chooseYourDestiny([1,2,3]);
+    	_carTracks[0] = chooseYourDestiny([0,1,2]);
     	if(Math.random()>0.5){
-    		var temp = chooseYourDestiny([1,2,3],_carTracks[0]);
+    		var temp = chooseYourDestiny([0,1,2],_carTracks[0]);
     		if(typeof temp !== "undefined")
     			_carTracks[1] = temp;
     	}
@@ -172,6 +172,12 @@ var _points = $(".screen-container div"),
 			var _step = 0;
 			var i,j;
 			function steps(){
+				if(runways.interval>0){
+					console.log(runways.interval);
+					runways.interval--;
+					setTimeout(steps,1000);
+					return;
+				}
 				switch(_step){
 					case 0:{
 						for(i = 0,j =0;i < runways.length;i++,j+=2){
@@ -181,6 +187,7 @@ var _points = $(".screen-container div"),
 							_details[j+1].setAttribute("id","activated");
 						}
 						_step++;
+						setTimeout(steps,1000);
 						break;
 					}
 					case 1:{
@@ -192,6 +199,7 @@ var _points = $(".screen-container div"),
 						var rez = diffArrays(old,_details);
 			            tidyUp(rez);
 			            _step++;
+			            setTimeout(steps,1000);
 			            break;
 					}
 					case 2:{
@@ -206,9 +214,9 @@ var _points = $(".screen-container div"),
 							_details[j+2].setAttribute("id","activated");
 						}
 						var rez = diffArrays(old,_details);
-						console.log(j);
 			            tidyUp(rez);
 			            _step++;
+			            setTimeout(steps,1000);
 			            break;
 					}
 					case 3:{
@@ -227,12 +235,12 @@ var _points = $(".screen-container div"),
 					}
 				}
 			}
-			var id = setInterval(steps,1000);
+			var id = setTimeout(steps,1000);
 		})();
 		return _details;		
 	}
 	/*end of enemy car code*/
 
 
-	Car.appearence([0,1,2]);
+	Car.appearence(generateRandomCars());
 	//Car.appearence([1]);
