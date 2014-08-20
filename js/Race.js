@@ -12,10 +12,11 @@
 var _points = $(".screen-container div"),
 	_rows = 9,
 	_columns = 20,
+	_car,
 	_carHeight = 5,
 	_carDetails = 7,
-	_speed = 600;
-	var	_pCar = new GeneratePlayersCar();
+	_speed = 300,
+	_pCar = new GeneratePlayersCar();
 	window.addEventListener("keydown",keyHandler,false);
 	window.addEventListener("keypress",keyHandler,false);
 
@@ -71,13 +72,11 @@ var _points = $(".screen-container div"),
 		}
 	}
 	GeneratePlayersCar.prototype.check = function(side){
-		if(getColumnSidewayPoint(this.details[6],side*2).getAttribute("id")=="activated")
-			console.log("pcar");
+		if(getColumnSidewayPoint(this.details[6],side*2).getAttribute("id")=="activated"){}
 		if(side>0)
 			var temp =getColumnSidewayPoint(this.details[1],side).getAttribute("id");
 		else
 			temp = getColumnSidewayPoint(this.details[0],side).getAttribute("id");
-			console.log(temp);
 	}
 	function keyHandler(e){
 		 switch (e.keyCode) {
@@ -180,8 +179,9 @@ var _points = $(".screen-container div"),
 /*car generation code end*/
     
 /*enemy car code*/ 
-    function Car(details){
+    function Car(details,runways){
 		this.details = details.slice(0);
+		this.runways = runways;
 	}
 	Car.prototype.roll = function(){
 		var self = this;
@@ -190,8 +190,7 @@ var _points = $(".screen-container div"),
 		function check(){
 			var _controlPixes = 2* self.details.length / _carDetails;
 			for(var i =0 ;i<_controlPixes;i++){
-				if(getRowDownPoint(self.details[i]).getAttribute("id")==="activated")
-					console.log("good");
+				if(getRowDownPoint(self.details[i]).getAttribute("id")==="activated"){}
 			}
 		}
 		function f(){
@@ -201,13 +200,72 @@ var _points = $(".screen-container div"),
 		    tidyUp(rez);
 		    if(i-- > 0)
 		    	setTimeout(f,_speed);
+		    else
+		    	Car.disappearence(self);
+
 		}
 		setTimeout(f,_speed);
+	}
+	Car.disappearence = function(car){
+			var _step = 0;
+			var i,j,_runwayAmount = car.runways.length;
+			var _details = car.details.slice(0);
+			function steps(){
+				switch(_step){
+					case 0:{
+						for(i=0;i<2*_runwayAmount;i++){
+							var temp = _details.shift();
+							temp.setAttribute("id","deactivated");
+						}
+						var old = stepDown(_details);
+						var rez = diffArrays(old,_details);
+			            tidyUp(rez);
+						_step++;
+						setTimeout(steps,_speed);
+						break;
+					}
+					case 1:{
+						for(i=0;i<1*_runwayAmount;i++){
+							var temp = _details.shift();
+							temp.setAttribute("id","deactivated");
+						}
+						var old = stepDown(_details);
+						var rez = diffArrays(old,_details);
+			            tidyUp(rez);
+			            _step++;
+			            setTimeout(steps,_speed);
+			            break;
+					}
+					case 2:{
+						for(i=0;i<3*_runwayAmount;i++){
+							var temp = _details.shift();
+							temp.setAttribute("id","deactivated");
+						}
+						var old = stepDown(_details);
+						var rez = diffArrays(old,_details);
+			            tidyUp(rez);
+			            _step++;
+			            setTimeout(steps,_speed);
+			            break;
+					}
+					case 3:{
+						for(i=0;i<1*_runwayAmount;i++){
+							var temp = _details.shift();
+							temp.setAttribute("id","deactivated");
+						}
+						var old = stepDown(_details);
+						var rez = diffArrays(old,_details);
+			            tidyUp(rez);
+			            _step++;
+						break;
+					}
+				}
+			}
+			var id = setTimeout(steps,_speed);
 	}
 	Car.appearence = function(runways){
 		var	_runwayWidth =3,
 			_details =[];
-		(function(){
 			var _step = 0;
 			var i,j;
 			function steps(){
@@ -267,15 +325,13 @@ var _points = $(".screen-container div"),
 			            tidyUp(rez);
 			            _step++;
 						clearInterval(id);
-						var _car = new Car(_details);
+						_car = new Car(_details,runways);
 						_car.roll();
 						break;
 					}
 				}
 			}
-			var id = setTimeout(steps,_speed);
-		})();
-		return _details;		
+			var id = setTimeout(steps,_speed);	
 	}
 	/*end of enemy car code*/
 
