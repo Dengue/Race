@@ -12,7 +12,9 @@
 var _points = $(".screen-container div"),
 	_rows = 9,
 	_columns = 20,
-	_speed = 50;
+	_carHeight = 5,
+	_carDetails = 7,
+	_speed = 600;
 	var	_pCar = new GeneratePlayersCar();
 	window.addEventListener("keydown",keyHandler,false);
 	window.addEventListener("keypress",keyHandler,false);
@@ -34,58 +36,73 @@ var _points = $(".screen-container div"),
 		this.details[5].setAttribute("id","activated");
 		this.details.push(_points[16*_rows+4]);
 		this.details[6].setAttribute("id","activated");
-		this.position = "middle";
+		this.position = 1;
 	}
 	GeneratePlayersCar.prototype.turnLeft = function(){
-		if(this.position!="left")
+		if(this.position!=0)
 		{
+			this.check(-1);
 			var old = this.details.slice(0);
 			for(var i=0;i<this.details.length;i++){
-				this.details[i]=_points[(this.details[i].offsetTop*_rows)/20 + (this.details[i].offsetLeft - 3*20)/20];
+				this.details[i]=getColumnSidewayPoint(this.details[i],-3);
 				this.details[i].setAttribute("id","activated");
 			}
 			tidyUp(old);
-			if(this.position=="middle")
-				this.position = "left";
+			if(this.position==1)
+				this.position = 0;
 			else
-				this.position = "middle";
+				this.position = 1;
 		}
 	}
 	GeneratePlayersCar.prototype.turnRight = function(){
-		if(this.position!="right")
+		if(this.position!=2)
 		{
+			this.check(1);
 			var old = this.details.slice(0);
 			for(var i=0;i<this.details.length;i++){
-				this.details[i]=_points[(this.details[i].offsetTop*_rows)/20 + (this.details[i].offsetLeft + 3*20)/20];
+				this.details[i]=getColumnSidewayPoint(this.details[i],3);
 				this.details[i].setAttribute("id","activated");
 			}
 			tidyUp(old);
-			if(this.position=="middle")
-				this.position = "right";
+			if(this.position==1)
+				this.position = 2;
 			else
-				this.position = "middle";
+				this.position = 1;
 		}
+	}
+	GeneratePlayersCar.prototype.check = function(side){
+		if(getColumnSidewayPoint(this.details[6],side*2).getAttribute("id")=="activated")
+			console.log("pcar");
+		if(side>0)
+			var temp =getColumnSidewayPoint(this.details[1],side).getAttribute("id");
+		else
+			temp = getColumnSidewayPoint(this.details[0],side).getAttribute("id");
+			console.log(temp);
 	}
 	function keyHandler(e){
 		 switch (e.keyCode) {
-            case 37:
+            case 37:{
                 _pCar.turnLeft();
                 break;
+            }
             case 38:
                 break;
-            case 39:
+            case 39:{
                 _pCar.turnRight();
                 break;
+            }
             case 40:
                 break;
-            case 65:
+            case 65:{
                 _pCar.turnLeft();
                 break;
+            }
             case 87:
                 break;
-            case 68:
+            case 68:{
                 _pCar.turnRight();
                 break;
+            }
             case 83:
                 break
         }
@@ -103,11 +120,20 @@ var _points = $(".screen-container div"),
 	    }
 	   return C;
 	}	
-
+	function getRowDownPoint(point,rows){
+		if(typeof rows == "undefined")
+			rows = 1;
+		return _points[(point.offsetTop+20*rows)/20*_rows+point.offsetLeft/20];
+	}
+	function getColumnSidewayPoint(point,columns){
+		if(typeof columns == "undefined")
+			columns = 1;
+		return _points[(point.offsetTop)/20*_rows+(point.offsetLeft + columns*20)/20];
+	}
     function stepDown(_details){
     	var old = _details.slice(0);
 		for(var i=0;i<_details.length;i++){
-			_details[i]=_points[(_details[i].offsetTop+20)/20*_rows+_details[i].offsetLeft/20];
+			_details[i]=getRowDownPoint(_details[i]);
 			_details[i].setAttribute("id","activated");
 		}
 		return old;
@@ -140,7 +166,7 @@ var _points = $(".screen-container div"),
     		if(typeof temp !== "undefined")
     			_carTracks[1] = temp;
     	}
-    	_carTracks.interval = getRandomInt(6,12);
+    	_carTracks.interval = getRandomInt(5,11);
     	return _carTracks;
     }
     function generateLevel(){
@@ -160,8 +186,16 @@ var _points = $(".screen-container div"),
 	Car.prototype.roll = function(){
 		var self = this;
 		Car.appearence(generateRandomCars());
-		var i = 15;
+		var i = _columns - _carHeight;
+		function check(){
+			var _controlPixes = 2* self.details.length / _carDetails;
+			for(var i =0 ;i<_controlPixes;i++){
+				if(getRowDownPoint(self.details[i]).getAttribute("id")==="activated")
+					console.log("good");
+			}
+		}
 		function f(){
+			check();
 			var old = stepDown(self.details);
 		    var rez = diffArrays(old,self.details);
 		    tidyUp(rez);
