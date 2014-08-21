@@ -1,5 +1,17 @@
 
 var _raceTetris = {
+	_restart:false,
+	makeField:function(){
+		var screen = document.getElementsByClassName('screen-container')[0];
+		var fragment = document.createDocumentFragment();
+		for(var i=0;i<180;i++){
+			var div = document.createElement('div');
+		    div.setAttribute("class","pix");
+		    div.setAttribute("id","deactivated");
+		    fragment.appendChild(div);
+		}
+		screen.appendChild(fragment);
+	},
 	startGame:function(){
 		var _points = $(".screen-container div"),
 		_rows = 9,
@@ -9,7 +21,6 @@ var _raceTetris = {
 		_carDetails = 7,
 		_speed = 50,
 		_pCar = new GeneratePlayersCar();
-		_restart = false;
 		window.addEventListener("keydown",keyHandler,false);
 		window.addEventListener("keypress",keyHandler,false);
 		/* players car code*/
@@ -65,7 +76,7 @@ var _raceTetris = {
 		}
 		GeneratePlayersCar.prototype.check = function(side){
 			if(getColumnSidewayPoint(this.details[6],side*2).getAttribute("id")=="activated"){
-				_restart=true;
+				_raceTetris._restart=true;
 			}
 			if(side>0){
 				var temp = getColumnSidewayPoint(this.details[1],side).getAttribute("id");
@@ -80,7 +91,7 @@ var _raceTetris = {
 				temp3 =getColumnSidewayPoint(this.details[3],2*side).getAttribute("id");
 			}
 			if(temp==="activated" || temp1==="activated" || temp2==="activated" || temp3 ==="activated")
-				_restart=true;
+				_raceTetris._restart=true;
 		}
 		function keyHandler(e){
 			 switch (e.keyCode) {
@@ -170,14 +181,6 @@ var _raceTetris = {
 	    	_carTracks.interval = getRandomInt(5,11);
 	    	return _carTracks;
 	    }
-	    function generateLevel(){
-	    	var _allCars = [];
-	    	for(var i =0;i<20;i++){
-	    		_allCars[i] = generateRandomCars();
-	    	}
-	    	_allCars[0].interval = 0;
-	    	return _allCars;
-	    }
 	/*car generation code end*/
 	    
 	/*enemy car code*/ 
@@ -193,15 +196,19 @@ var _raceTetris = {
 				var _controlPixes = 2* self.details.length / _carDetails;
 				for(var i =0 ;i<_controlPixes;i++){
 					if(getRowDownPoint(self.details[i]).getAttribute("id")==="activated"){
-						_restart=true;
-						setTimeout(_raceTetris.gameOver,2000);
+						_raceTetris._restart=true;
 					}
 				}
 			}
 			function f(){
 				check();
-				if(_restart)
+				if(_raceTetris._restart){
+					window.removeEventListener("keydown",keyHandler,false);
+					window.removeEventListener("keypress",keyHandler,false);
+					setTimeout(_raceTetris.gameOver,300);
+					setTimeout(_raceTetris.restart,2000);
 					return;
+				}
 				var old = stepDown(self.details);
 			    var rez = diffArrays(old,self.details);
 			    tidyUp(rez);
@@ -218,7 +225,7 @@ var _raceTetris = {
 				var i,j,_runwayAmount = car.runways.length;
 				var _details = car.details.slice(0);
 				function steps(){
-					if(_restart)
+					if(_raceTetris._restart)
 					return;
 					switch(_step){
 						case 0:{
@@ -278,7 +285,7 @@ var _raceTetris = {
 				var _step = 0;
 				var i,j;
 				function steps(){
-					if(_restart)
+					if(_raceTetris._restart)
 					return;
 					if(runways.interval>0){
 						runways.interval--;
@@ -347,25 +354,38 @@ var _raceTetris = {
 		/*end of enemy car code*/
 		Car.appearence(generateRandomCars());
 	},
+	restart:function(){
+		_raceTetris._restart =false;
+		var _points = $(".screen-container div");
+		for(var i=0;i<_points.length;i++){
+			_points[i].setAttribute("id","deactivated");
+		}
+		setTimeout(_raceTetris.startGame,500);
+	},
 	gameOver:function(){
-		console.log(1);
-		_restart =false;
+		var _points = $(".screen-container div");
+		var _activePoints = [];
+		function turnOff(elem){
+			if(elem.getAttribute("id")==="activated"){
+				_activePoints.push(elem);
+				elem.setAttribute("id","deactivated");
+			}
+		}
+		function turnOn(){
+			for(var i=0;i<_activePoints.length;i++){
+				_activePoints[i].setAttribute("id","activated");
+			}
+		}
+		for(var i=0;i<_points.length;i++){
+			turnOff(_points[i])
+		}
+		setTimeout(turnOn,1000);
 	}
 }
 
 
 window.onload = function(){
-	(function makeField(){
-		var screen = document.getElementsByClassName('screen-container')[0];
-		var fragment = document.createDocumentFragment();
-		for(var i=0;i<180;i++){
-			var div = document.createElement('div');
-		    div.setAttribute("class","pix");
-		    div.setAttribute("id","deactivated");
-		    fragment.appendChild(div);
-		}
-		screen.appendChild(fragment);
-	})();
+	_raceTetris.makeField();
 	_raceTetris.startGame();
 }
 
