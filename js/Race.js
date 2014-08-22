@@ -390,7 +390,7 @@ var _raceTetris = {
 
 window.onload = function(){
 	_raceTetris.makeField();
-	_raceTetris.startGame();
+	setTimeout(_raceTetris.startGame,2000);
 }
 
 
