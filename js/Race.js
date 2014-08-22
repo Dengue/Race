@@ -23,6 +23,7 @@ var _raceTetris = {
 		_pCar = new GeneratePlayersCar();
 		window.addEventListener("keydown",keyHandler,false);
 		window.addEventListener("keypress",keyHandler,false);
+		_raceTetris.restart.costile = 0;
 		/* players car code*/
 		function GeneratePlayersCar(){
 			this.details = [];
@@ -355,12 +356,15 @@ var _raceTetris = {
 		Car.appearence(generateRandomCars());
 	},
 	restart:function(){
-		_raceTetris._restart =false;
-		var _points = $(".screen-container div");
-		for(var i=0;i<_points.length;i++){
-			_points[i].setAttribute("id","deactivated");
+		_raceTetris.restart.costile++;
+		if(_raceTetris.restart.costile%2===1){
+			_raceTetris._restart =false;
+			var _points = $(".screen-container div");
+			for(var i=0;i<_points.length;i++){
+				_points[i].setAttribute("id","deactivated");
+			}
+			setTimeout(_raceTetris.startGame,500);
 		}
-		setTimeout(_raceTetris.startGame,500);
 	},
 	gameOver:function(){
 		var _points = $(".screen-container div");
