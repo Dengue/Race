@@ -13,7 +13,7 @@ var _raceTetris = {
 		screen.appendChild(fragment);
 	},
 	startGame:function(){
-		var _points = $(".screen-container div"),
+		var _points = document.querySelectorAll(".screen-container div"),
 		_rows = 9,
 		_columns = 20,
 		_car,
@@ -359,7 +359,7 @@ var _raceTetris = {
 		_raceTetris.restart.costile++;
 		if(_raceTetris.restart.costile%2===1){
 			_raceTetris._restart =false;
-			var _points = $(".screen-container div");
+			var _points = document.querySelectorAll(".screen-container div");
 			for(var i=0;i<_points.length;i++){
 				_points[i].setAttribute("id","deactivated");
 			}
@@ -367,7 +367,7 @@ var _raceTetris = {
 		}
 	},
 	gameOver:function(){
-		var _points = $(".screen-container div");
+		var _points = document.querySelectorAll(".screen-container div");
 		var _activePoints = [];
 		function turnOff(elem){
 			if(elem.getAttribute("id")==="activated"){
